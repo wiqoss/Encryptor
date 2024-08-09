@@ -10,7 +10,7 @@ import java.util.Base64;
 import java.util.concurrent.CompletableFuture;
 
 public class AsyncEncryptor {
-    public static CompletableFuture<String> encrypt(String input, SecretKey key, IvParameterSpec spec) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException {
+    public static CompletableFuture<String> encrypt(String input, AESKey key, IvPS spec) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException {
         return CompletableFuture.supplyAsync(() -> {
             Cipher cipher = null;
             try {
@@ -21,7 +21,7 @@ public class AsyncEncryptor {
                 throw new RuntimeException(e);
             }
             try {
-                cipher.init(Cipher.ENCRYPT_MODE, key, spec);
+                cipher.init(Cipher.ENCRYPT_MODE, key.getSecretKey(), spec.getIvParameterSpec());
             } catch (InvalidKeyException e) {
                 throw new RuntimeException(e);
             } catch (InvalidAlgorithmParameterException e) {
@@ -38,11 +38,11 @@ public class AsyncEncryptor {
         });
     }
 
-    public static CompletableFuture<String> decrypt(String input, SecretKey key, IvParameterSpec spec) {
+    public static CompletableFuture<String> decrypt(String input, AESKey key, IvPS spec) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-                cipher.init(Cipher.DECRYPT_MODE, key, spec);
+                cipher.init(Cipher.DECRYPT_MODE, key.getSecretKey(), spec.getIvParameterSpec());
                 byte[] text = cipher.doFinal(Base64.getDecoder().decode(input));
                 return new String(text);
             } catch (NoSuchAlgorithmException e) {
@@ -59,21 +59,5 @@ public class AsyncEncryptor {
                 throw new RuntimeException(e);
             }
         });
-    }
-
-    public static SecretKey generateKey(int i) {
-        try {
-            KeyGenerator gen = KeyGenerator.getInstance("AES");
-            gen.init(i);
-            return gen.generateKey();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static IvParameterSpec generateIv() {
-        byte[] iv = new byte[16];
-        new SecureRandom().nextBytes(iv);
-        return new IvParameterSpec(iv);
     }
 }

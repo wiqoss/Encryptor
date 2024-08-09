@@ -1,4 +1,7 @@
+import org.junit.jupiter.api.Test;
+import tk.wiq.AESKey;
 import tk.wiq.AsyncEncryptor;
+import tk.wiq.IvPS;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
@@ -12,10 +15,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class Main {
-    public static void main(String[] args) throws InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, ExecutionException, InterruptedException {
+
+    @Test
+    public void encrypt_and_decrypt() throws InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, ExecutionException, InterruptedException {
         String input = "Some very nice and interesting text";
-        SecretKey key = AsyncEncryptor.generateKey(128);
-        IvParameterSpec spec = AsyncEncryptor.generateIv();
+        AESKey key = new AESKey(256);
+        IvPS spec = new IvPS(16);
         long e = System.currentTimeMillis();
         CompletableFuture<String> encryptedText = AsyncEncryptor.encrypt(input, key, spec);
         System.out.println("Waiting for encrypt end...");
@@ -30,8 +35,8 @@ public class Main {
         System.out.println(
                 "Encrypted text: " + encryptedText.get() +
                 "\nDecrypted text: " + decryptedText.get() +
-                "\nSecret key: " + toString(key.getEncoded()) +
-                "\nIvParameterSpec: " + toString(spec.getIV())
+                "\nSecret key: " + key.getKey() +
+                "\nIvParameterSpec: " + spec.getIv()
         );
     }
 
