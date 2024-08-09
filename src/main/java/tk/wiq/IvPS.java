@@ -2,6 +2,7 @@ package tk.wiq;
 
 import javax.crypto.spec.IvParameterSpec;
 import java.security.SecureRandom;
+import java.util.concurrent.CompletableFuture;
 
 public class IvPS implements CharSequence {
 
@@ -13,12 +14,16 @@ public class IvPS implements CharSequence {
         this.ivParameterSpec = new IvParameterSpec(hexStringToByteArray(iv));
     }
 
-    public IvPS(int size) {
+    private IvPS(int size) {
         byte[] ivBytes = new byte[size];
         SecureRandom random = new SecureRandom();
         random.nextBytes(ivBytes);
         this.ivParameterSpec = new IvParameterSpec(ivBytes);
         this.iv = initStringIv();
+    }
+
+    public static CompletableFuture<IvPS> createAsynchronously(int size) {
+        return CompletableFuture.completedFuture(new IvPS(size));
     }
 
     private String initStringIv() {

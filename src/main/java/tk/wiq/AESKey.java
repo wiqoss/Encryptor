@@ -4,6 +4,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.CompletableFuture;
 
 public class AESKey implements CharSequence {
 
@@ -15,7 +16,7 @@ public class AESKey implements CharSequence {
         this.secretKey = new SecretKeySpec(hexStringToByteArray(key), "AES");
     }
 
-    public AESKey(int size) {
+    private AESKey(int size) {
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
             keyGenerator.init(size);
@@ -24,6 +25,10 @@ public class AESKey implements CharSequence {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static CompletableFuture<AESKey> createAsynchronously(int size) {
+        return CompletableFuture.completedFuture(new AESKey(size));
     }
 
     private String initStringKey() {
