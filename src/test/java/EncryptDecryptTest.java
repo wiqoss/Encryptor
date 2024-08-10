@@ -16,25 +16,19 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class EncryptDecryptTest {
 
-    public Long encryptAndDecrypt(String input, boolean log) throws InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, ExecutionException, InterruptedException {
+    public Long encryptAndDecrypt(String input, boolean log) throws Exception {
         long e = System.currentTimeMillis();
         CompletableFuture<AESKey> key = AESKey.createAsynchronously(256);
         CompletableFuture<IvPS> spec = IvPS.createAsynchronously(16);
         key.join();
         spec.join();
         CompletableFuture<String> encryptedText = TextEncryptor.encrypt(input, key.get(), spec.get());
-        //System.out.println("Waiting for encrypt end...");
         encryptedText.join();
-        //System.out.println("Encrypted in " + (System.currentTimeMillis() - e));
-        //long d = System.currentTimeMillis();
         CompletableFuture<String> decryptedText = TextEncryptor.decrypt(encryptedText.get(), key.get(), spec.get());
-        //System.out.println("Waiting for decrypt end...");
         decryptedText.join();
-        //System.out.println("Decrypted in " + (System.currentTimeMillis() - d));
         long time = (System.currentTimeMillis() - e);
-        //System.out.println("Process finished in " + getColor(time) + " ms for \"" + input + "\"");
         if(log) {
-            System.out.println("Process finished in " + getColor(time) + " ms");
+            System.out.println("Process finished in " + time + " ms");
             System.out.println(
                 "Encrypted text: \033[31m" + encryptedText.get() +
                 "\n\033[0mSecret key: \033[32m" + key.get().getKey() +
@@ -43,16 +37,6 @@ public class EncryptDecryptTest {
         }
 
         return time;
-    }
-
-    private String getColor(long time) {
-        if (time >= 23) {
-            return "\033[31m" + time + "\033[0m";
-        } else if (time >= 20) {
-            return "\033[33m" + time + "\033[0m";
-        } else {
-            return "\033[32m" + time + "\033[0m";
-        }
     }
 
     @Test
@@ -86,17 +70,7 @@ public class EncryptDecryptTest {
         String s = "S".repeat(1_000_000);
         try {
             encryptAndDecrypt(s, false);
-        } catch (InvalidAlgorithmParameterException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchPaddingException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (InvalidKeyException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

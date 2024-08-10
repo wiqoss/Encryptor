@@ -66,16 +66,8 @@ public class AsyncFileEncryptor {
                 FileOutputStream fos = new FileOutputStream(newFile);
                 fos.write(data.getBytes());
                 fos.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
-            } catch (InvalidAlgorithmParameterException e) {
-                throw new RuntimeException(e);
-            } catch (NoSuchPaddingException e) {
-                throw new RuntimeException(e);
-            } catch (NoSuchAlgorithmException e) {
-                throw new RuntimeException(e);
-            } catch (InvalidKeyException e) {
-                throw new RuntimeException(e);
             }
         });
     }

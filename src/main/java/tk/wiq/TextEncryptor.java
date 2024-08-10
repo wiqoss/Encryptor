@@ -8,7 +8,8 @@ import java.util.Base64;
 import java.util.concurrent.CompletableFuture;
 
 public class TextEncryptor {
-    public static CompletableFuture<String> encrypt(String input, AESKey key, IvPS spec) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException {
+    
+    public static CompletableFuture<String> encrypt(String input, AESKey key, IvPS spec) {
         return CompletableFuture.supplyAsync(() -> {
             Cipher cipher = null;
             try {
