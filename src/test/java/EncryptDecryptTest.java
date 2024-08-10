@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class EncryptDecryptTest {
 
-    public Long encryptAndDecrypt(String input) throws InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, ExecutionException, InterruptedException {
+    public Long encryptAndDecrypt(String input, boolean log) throws InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, ExecutionException, InterruptedException {
         long e = System.currentTimeMillis();
         CompletableFuture<AESKey> key = AESKey.createAsynchronously(256);
         CompletableFuture<IvPS> spec = IvPS.createAsynchronously(16);
@@ -32,14 +32,16 @@ public class EncryptDecryptTest {
         //System.out.println("Decrypted in " + (System.currentTimeMillis() - d));
         long time = (System.currentTimeMillis() - e);
         //System.out.println("Process finished in " + getColor(time) + " ms for \"" + input + "\"");
-        //System.out.println("Process finished in " + getColor(time) + " ms");
+        if(log) {
+            System.out.println("Process finished in " + getColor(time) + " ms");
+            System.out.println(
+                "Encrypted text: \033[31m" + encryptedText.get() +
+                "\n\033[0mSecret key: \033[32m" + key.get().getKey() +
+                "\n\033[0mIvParameterSpec: \033[31m" + spec.get().getIv()
+            );
+        }
+
         return time;
-//        System.out.println(
-//                "Encrypted text: " + encryptedText.get() +
-//                "\nDecrypted text: " + decryptedText.get() +
-//                "\nSecret key: " + key.get().getKey() +
-//                "\nIvParameterSpec: " + spec.get().getIv()
-//        );
     }
 
     private String getColor(long time) {
@@ -65,7 +67,7 @@ public class EncryptDecryptTest {
                     j++;
                 }
 
-                results.add(encryptAndDecrypt(stb.toString()));
+                results.add(encryptAndDecrypt(stb.toString(), false));
                 i++;
             }
         } catch (Exception e) {
@@ -76,5 +78,25 @@ public class EncryptDecryptTest {
             System.out.println("Average time: " + results.stream().mapToDouble(x -> x).average().getAsDouble());
             System.out.println("First time: " + results.getFirst());
         }));
+    }
+
+    @Test
+    public void encryptBillionSymbols() {
+        String s = "S".repeat(1_000_000);
+        try {
+            encryptAndDecrypt(s, true);
+        } catch (InvalidAlgorithmParameterException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchPaddingException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidKeyException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
