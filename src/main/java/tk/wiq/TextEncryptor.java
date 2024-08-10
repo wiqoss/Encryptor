@@ -1,16 +1,13 @@
 package tk.wiq;
 
 import javax.crypto.*;
-import javax.crypto.spec.IvParameterSpec;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
-public class AsyncEncryptor {
+public class TextEncryptor {
     public static CompletableFuture<String> encrypt(String input, AESKey key, IvPS spec) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException {
         return CompletableFuture.supplyAsync(() -> {
             Cipher cipher = null;
