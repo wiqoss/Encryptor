@@ -71,27 +71,17 @@ public static CompletableFuture<String> decrypt(String input, AESKey key, IvPS i
 
 Import with Gradle:
 ```groovy
-repositories {
-    maven { url 'https://jitpack.io' }
-}
-
 dependencies {
-    implementation "com.github.yuiopmju:Encryptor:1.0.1"
+    implementation "tk.wiq:encryptor:1.0.1"
 }
 ```
 
 Import with maven:
 ```xml
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
 <dependencies>
     <dependency>
-        <groupId>com.github.yuiopmju</groupId>
-        <artifactId>Encryptor</artifactId>
+        <groupId>tk.wiq</groupId>
+        <artifactId>encryptor</artifactId>
         <version>1.0.1</version>
     </dependency>
 </dependencies>
