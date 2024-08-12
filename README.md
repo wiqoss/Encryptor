@@ -105,6 +105,7 @@ Import with maven:
 
 Your ~/.m2/settings.xml:
 
+```xml
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
@@ -141,3 +142,4 @@ Your ~/.m2/settings.xml:
     </server>
   </servers>
 </settings>
+```
