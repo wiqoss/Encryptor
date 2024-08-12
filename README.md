@@ -71,6 +71,14 @@ public static CompletableFuture<String> decrypt(String input, AESKey key, IvPS i
 
 Import with Gradle:
 ```groovy
+
+repositories {
+    maven {
+        name = "github"
+        url = "https://mvn.pkg.github.com"
+    }
+}
+
 dependencies {
     implementation "tk.wiq:encryptor:1.0.1"
 }
@@ -78,6 +86,14 @@ dependencies {
 
 Import with maven:
 ```xml
+
+<repositories>
+    <repository>
+        <id>github</id>
+        <url>https://mvn.pkg.github.com</url>
+    </repository>
+</repositories>
+
 <dependencies>
     <dependency>
         <groupId>tk.wiq</groupId>
@@ -86,3 +102,42 @@ Import with maven:
     </dependency>
 </dependencies>
 ```
+
+Your ~/.m2/settings.xml:
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+  <activeProfiles>
+    <activeProfile>github</activeProfile>
+  </activeProfiles>
+
+  <profiles>
+    <profile>
+      <id>github</id>
+      <repositories>
+        <repository>
+          <id>central</id>
+          <url>https://repo1.maven.org/maven2</url>
+        </repository>
+        <repository>
+          <id>github</id>
+          <url>https://maven.pkg.github.com/yuiopmju/Encryptor</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+
+  <servers>
+    <server>
+      <id>github</id>
+      <username>USERNAME</username>
+      <password>TOKEN</password>
+    </server>
+  </servers>
+</settings>
