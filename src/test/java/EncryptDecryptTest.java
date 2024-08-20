@@ -1,21 +1,23 @@
 import org.junit.jupiter.api.Test;
 import tk.wiq.*;
+import tk.wiq.crypt.AESKey;
+import tk.wiq.crypt.FileCryptographyException;
+import tk.wiq.crypt.IvPS;
+import tk.wiq.io.AsyncDirectoryDecryptor;
+import tk.wiq.io.AsyncDirectoryEncryptor;
+import tk.wiq.io.AsyncFileDecryptor;
+import tk.wiq.io.AsyncFileEncryptor;
 
-import javax.crypto.NoSuchPaddingException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EncryptDecryptTest {
-
+    
     public Long encryptAndDecrypt(String input, boolean log) throws Exception {
         long e = System.currentTimeMillis();
         CompletableFuture<AESKey> key = AESKey.createAsynchronously(256);
@@ -139,5 +141,36 @@ public class EncryptDecryptTest {
         } catch (FileCryptographyException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    public void decryptDirectory() {
+        System.out.println("<--- DIRECTORY DECRYPT TEST --->");
+        try {
+            AsyncDirectoryDecryptor decryptor = new AsyncDirectoryDecryptor(new File("testDirectory"));
+            decryptor.setKey(new AESKey("b15c5ceebb4ed71ba86e750ab3e6e48f3900c3f02aaf202250e9ce3ec425a713"));
+            decryptor.setSpec(new IvPS("ecc6fab6428d184d7a352fe6d93503f7"));
+            decryptor.decrypt();
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            System.out.println("<--- DIRECTORY DECRYPT TEST END --->");
+        }
+    }
+    
+    @Test
+    public void encryptDirectory() {
+        System.out.println("<--- DIRECTORY ENCRYPT TEST --->");
+        try {
+            AsyncDirectoryEncryptor encryptor = new AsyncDirectoryEncryptor(new File("testDirectory"));
+            encryptor.setKey(new AESKey("b15c5ceebb4ed71ba86e750ab3e6e48f3900c3f02aaf202250e9ce3ec425a713"));
+            encryptor.setSpec(new IvPS("ecc6fab6428d184d7a352fe6d93503f7"));
+            encryptor.encrypt().join();
+            System.out.println("<--- DIRECTORY ENCRYPT TEST END --->");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            decryptDirectory();
+        }
+        
     }
 }

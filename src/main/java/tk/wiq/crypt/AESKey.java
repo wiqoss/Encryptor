@@ -1,4 +1,4 @@
-package tk.wiq;
+package tk.wiq.crypt;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;

@@ -1,4 +1,4 @@
-package tk.wiq;
+package tk.wiq.crypt;
 
 public class FileCryptographyException extends Exception {
     public FileCryptographyException(String message) {

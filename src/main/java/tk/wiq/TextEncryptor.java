@@ -1,5 +1,8 @@
 package tk.wiq;
 
+import tk.wiq.crypt.AESKey;
+import tk.wiq.crypt.IvPS;
+
 import javax.crypto.*;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;

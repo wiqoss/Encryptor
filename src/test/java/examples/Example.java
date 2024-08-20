@@ -1,6 +1,10 @@
 package examples;
 
 import tk.wiq.*;
+import tk.wiq.crypt.AESKey;
+import tk.wiq.crypt.IvPS;
+import tk.wiq.io.AsyncFileDecryptor;
+import tk.wiq.io.AsyncFileEncryptor;
 
 import java.io.File;
 import java.util.concurrent.CompletableFuture;

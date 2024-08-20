@@ -1,26 +1,31 @@
-package tk.wiq;
+package tk.wiq.io;
 
-import javax.crypto.NoSuchPaddingException;
+import tk.wiq.TextEncryptor;
+import tk.wiq.crypt.AESKey;
+import tk.wiq.crypt.FileCryptographyException;
+import tk.wiq.crypt.IvPS;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.concurrent.CompletableFuture;
 
-public class AsyncFileEncryptor {
+public class AsyncFileDecryptor {
     
     private File file;
     private AESKey aesKey;
     private IvPS spec;
-    private boolean deleteOnEncrypt = false;
+    private boolean deleteOnDecrypt = false;
     
-    public AsyncFileEncryptor(File file) {
+    public AsyncFileDecryptor(File file) {
+        if (!file.exists()) {
+            throw new NullPointerException("File doesnt exist");
+        }
+        
         if (file.isDirectory()) {
-            throw new UnsupportedOperationException("Available only for files, directories not supported yet.");
+            throw new UnsupportedOperationException("Available only for files, use AsyncDirectoryDecryptor");
         }
         
         this.file = file;
@@ -34,12 +39,12 @@ public class AsyncFileEncryptor {
         this.spec = spec;
     }
     
-    public void deleteOnEncrypt(boolean b) {
-        this.deleteOnEncrypt = b;
+    public void deleteOnDecrypt(boolean b) {
+        this.deleteOnDecrypt = b;
     }
     
-    public boolean isDeleteOnEncrypt() {
-        return deleteOnEncrypt;
+    public boolean isDeleteOnDecrypt() {
+        return deleteOnDecrypt;
     }
     
     public AESKey getKey() {
@@ -50,7 +55,7 @@ public class AsyncFileEncryptor {
         return spec;
     }
     
-    public CompletableFuture<Void> encrypt() throws FileCryptographyException {
+    public CompletableFuture<Void> decrypt() throws FileCryptographyException {
         if (spec == null || aesKey == null || !file.exists()) {
             throw new FileCryptographyException("IvPS (spec), AESKey is null or file doesn't exists.");
         }
@@ -61,12 +66,13 @@ public class AsyncFileEncryptor {
                 byte[] bytes = new byte[(int) file.length()];
                 fis.read(bytes);
                 fis.close();
-                String data = TextEncryptor.encrypt(Base64.getEncoder().encodeToString(bytes), aesKey, spec).join();
-                File newFile = new File(file.getParentFile(), file.getName() + ".encrypted");
+                String data = TextEncryptor.decrypt(new String(bytes), aesKey, spec).join();
+                byte[] decryptedData = Base64.getDecoder().decode(data);
+                File newFile = new File(file.getParentFile(), file.getName() + ".decrypted");
                 FileOutputStream fos = new FileOutputStream(newFile);
-                fos.write(data.getBytes());
+                fos.write(decryptedData);
                 fos.close();
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         });

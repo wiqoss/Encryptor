@@ -1,4 +1,4 @@
-package tk.wiq;
+package tk.wiq.crypt;
 
 import javax.crypto.spec.IvParameterSpec;
 import java.security.SecureRandom;
